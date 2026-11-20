@@ -4,9 +4,8 @@
 
   <br />
 
-  <img src="assets/brand/aether-logo.png" alt="AETHER ENGINE logo" width="180" />
 
-  <h1>AETHER ENGINE</h1>
+  <h1><img src="assets/brand/aether-logo.png" alt="" width="38" align="center" /> AETHER ENGINE</h1>
 
   **Render worlds. Simulate systems. Build what comes next.**
 
@@ -35,7 +34,7 @@
 
 > **Project status:** AETHER ENGINE is under active early-stage development. The native platform foundation and the first core/runtime logging slice have been merged. The renderer, editor, physics, world simulation and other advanced systems remain planned or under development; they are not represented as completed features.
 
-## Vision
+<h2><img src="assets/brand/aether-logo.png" alt="" width="30" align="center" /> Vision</h2>
 
 AETHER ENGINE is an independent technology platform for building interactive 2D and 3D worlds.
 
@@ -43,7 +42,7 @@ The long-term goal is to bring real-time graphics, physics, procedural environme
 
 This is a long-term engineering effort. The priority is a dependable engine foundation—not a feature list that exists only on paper.
 
-## Capabilities
+<h2><img src="assets/brand/aether-logo.png" alt="" width="30" align="center" /> Capabilities</h2>
 
 The following describes the intended direction of the engine. A capability becomes implemented only when its code and acceptance evidence support that claim.
 
@@ -58,7 +57,7 @@ The following describes the intended direction of the engine. A capability becom
 | **Multiplayer** | Server-authoritative networking and synchronized simulation |
 | **Audio** | Spatial audio and extensible sound systems |
 
-## Architecture
+<h2><img src="assets/brand/aether-logo.png" alt="" width="30" align="center" /> Architecture</h2>
 
 AETHER is designed as a modular native engine. Engine-facing interfaces should remain independent of third-party implementation details wherever practical.
 
@@ -73,7 +72,7 @@ AETHER is designed as a modular native engine. Engine-facing interfaces should r
 | **Tools** | Native editor, asset pipeline and developer utilities |
 | **Services** | Optional scripting, AI and networking integrations |
 
-### Technology baseline
+<h3><img src="assets/brand/aether-logo.png" alt="" width="22" align="center" /> Technology baseline</h3>
 
 | Area | Current direction |
 |---|---|
@@ -87,16 +86,16 @@ AETHER is designed as a modular native engine. Engine-facing interfaces should r
 
 Third-party dependencies retain their own licenses and notices. A library being listed as a candidate or planned technology does not mean it has been integrated. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-## Build from source
+<h2><img src="assets/brand/aether-logo.png" alt="" width="30" align="center" /> Build from source</h2>
 
-### Requirements
+<h3><img src="assets/brand/aether-logo.png" alt="" width="22" align="center" /> Requirements</h3>
 
 - CMake 3.25 or newer
 - A C++ compiler with C++20 support
 - Git
 - Internet access for the initial SDL3 source download
 
-### Linux prerequisites (Ubuntu/Debian)
+<h3><img src="assets/brand/aether-logo.png" alt="" width="22" align="center" /> Linux prerequisites (Ubuntu/Debian)</h3>
 
 SDL3 is built from source by CMake. Install the X11 development packages used by the CI workflow before configuring:
 
@@ -107,14 +106,14 @@ sudo apt-get install --yes libx11-dev libxext-dev libxrandr-dev libxcursor-dev l
 
 Other Linux distributions need equivalent development packages for their supported window-system configuration. The headless test driver does not remove SDL's configure-time development-library requirements.
 
-### Clone
+<h3><img src="assets/brand/aether-logo.png" alt="" width="22" align="center" /> Clone</h3>
 
 ```bash
 git clone https://github.com/fried-brain/aether-engine.git
 cd aether-engine
 ```
 
-### Configure and build
+<h3><img src="assets/brand/aether-logo.png" alt="" width="22" align="center" /> Configure and build</h3>
 
 Debug:
 
@@ -130,7 +129,7 @@ cmake --preset release
 cmake --build --preset release
 ```
 
-### Run tests
+<h3><img src="assets/brand/aether-logo.png" alt="" width="22" align="center" /> Run tests</h3>
 
 ```bash
 ctest --test-dir build/debug -C Debug --output-on-failure
@@ -138,7 +137,7 @@ ctest --test-dir build/debug -C Debug --output-on-failure
 
 The current foundation builds the SDL-backed platform library and its contract-test executable, alongside the initial core/status/logging library and tests. It does **not** yet produce a complete runnable game engine, renderer or editor.
 
-## Development status
+<h2><img src="assets/brand/aether-logo.png" alt="" width="30" align="center" /> Development status</h2>
 
 AETHER ENGINE is developed in reviewable milestones. Merged code is distinguished from work that is still planned.
 
@@ -152,16 +151,16 @@ AETHER ENGINE is developed in reviewable milestones. Merged code is distinguishe
 | **M3** | Physics and simulation foundations | Planned |
 | **M4** | World systems, asset pipeline and editor foundations | Planned |
 
-### Merged foundation
+<h3><img src="assets/brand/aether-logo.png" alt="" width="22" align="center" /> Merged foundation</h3>
 
-**M1.1 — Native platform foundation**
+<h3><img src="assets/brand/aether-logo.png" alt="" width="22" align="center" /> M1.1 — Native platform foundation</h3>
 - SDL3 pinned to version 3.4.20
 - AETHER-owned platform, window and input-event interfaces
 - RAII window ownership and platform-state lifetime management
 - Windows and Linux CI builds
 - Headless platform contract tests
 
-**M1.2 — Initial core/runtime slice**
+<h3><img src="assets/brand/aether-logo.png" alt="" width="22" align="center" /> M1.2 — Initial core/runtime slice</h3>
 - Core `Status` and `ErrorCode` foundation
 - Engine-owned logging interface and console sink
 - UTC ISO-8601 millisecond timestamps
@@ -169,7 +168,7 @@ AETHER ENGINE is developed in reviewable milestones. Merged code is distinguishe
 - Thread dependency propagated through the core target
 - Initial logging and status contract tests
 
-### M1.2 still in progress
+<h3><img src="assets/brand/aether-logo.png" alt="" width="22" align="center" /> M1.2 still in progress</h3>
 
 The merged logging slice is not the complete M1.2 milestone. Remaining work includes:
 
@@ -183,7 +182,7 @@ See the [M1.2 engineering specification](documentation/specifications/M1.2-Core-
 
 A milestone is complete only after its acceptance criteria have been implemented, verified and accepted.
 
-## Engineering principles
+<h2><img src="assets/brand/aether-logo.png" alt="" width="30" align="center" /> Engineering principles</h2>
 
 1. **Build independently.** Create original systems and interfaces; do not copy proprietary engine code or protected assets.
 2. **Keep boundaries clear.** Subsystems should be modular and replaceable where practical.
@@ -192,7 +191,7 @@ A milestone is complete only after its acceptance criteria have been implemented
 5. **Treat dependencies responsibly.** Review versions, licenses, attribution, security and maintenance.
 6. **Keep the core offline-capable.** Cloud services and external AI providers remain optional to the native runtime.
 
-## Contributing
+<h2><img src="assets/brand/aether-logo.png" alt="" width="30" align="center" /> Contributing</h2>
 
 Thoughtful contributions are welcome as the project matures.
 
@@ -200,7 +199,7 @@ Before proposing a substantial change, read [CONTRIBUTING.md](CONTRIBUTING.md), 
 
 Do not submit proprietary code, unlicensed assets, credentials or confidential material.
 
-## License
+<h2><img src="assets/brand/aether-logo.png" alt="" width="30" align="center" /> License</h2>
 
 AETHER ENGINE is licensed under the **Apache License 2.0**. See [LICENSE](LICENSE) for the full terms.
 
