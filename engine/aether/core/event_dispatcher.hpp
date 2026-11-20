@@ -21,6 +21,12 @@ struct Subscription final {
 
 class EventDispatcher final {
 public:
+    EventDispatcher() = default;
+    EventDispatcher(const EventDispatcher&) = delete;
+    EventDispatcher& operator=(const EventDispatcher&) = delete;
+    EventDispatcher(EventDispatcher&&) noexcept = default;
+    EventDispatcher& operator=(EventDispatcher&&) noexcept = default;
+
     template<class Event>
     using Handler = std::function<void(const Event&)>;
 
