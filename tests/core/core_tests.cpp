@@ -10,7 +10,7 @@
 #include <vector>
 namespace {
 void expect(bool condition, const char* message) {
-    if (!condition) { std::cerr << "FAILED: " << message << '\\n'; std::exit(EXIT_FAILURE); }
+    if (!condition) { std::cerr << "FAILED: " << message << '\n'; std::exit(EXIT_FAILURE); }
 }
 class RecordingSink final : public aether::core::ILogSink {
 public:
@@ -74,6 +74,6 @@ int main() {
     test_logger_rejects_null_sink();
     test_logger_filters_levels_and_preserves_fields();
     test_logger_concurrent_writes_are_complete();
-    std::cout << "AETHER core contract tests passed.\\n";
+    std::cout << "AETHER core contract tests passed.\n";
     return EXIT_SUCCESS;
 }
