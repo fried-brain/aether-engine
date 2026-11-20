@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="assets/brand/aether-emblem.svg" alt="AETHER ENGINE emblem" width="132" />
+  <img src="assets/brand/aether-logo.png" alt="AETHER ENGINE emblem" width="132" />
 
   # AETHER ENGINE
 
@@ -26,7 +26,7 @@
 </div>
 
 <p align="center">
-  <img src="assets/brand/aether-banner.svg" alt="AETHER ENGINE — Render, simulate, create, explore" width="100%" />
+  <img src="assets/brand/aether-engine-banner.png" alt="AETHER ENGINE — Render, simulate, create, explore" width="100%" />
 </p>
 
 ---
@@ -116,7 +116,7 @@ cmake --preset release
 cmake --build --preset release
 ```
 
-The current CMake target is an **interface-only foundation**. These commands verify the initial project configuration; they do not yet produce a runnable game engine or editor.
+The current build produces the SDL-backed AETHER platform library and its contract-test executable. It provides native window lifecycle and input/event translation behind AETHER-owned interfaces. It does not yet produce a runnable game engine, renderer or editor. The first configure fetches the pinned SDL3 source release, so an internet connection is required for that initial dependency download.
 
 ## Roadmap
 
@@ -136,14 +136,15 @@ The roadmap is directional and may be refined as engineering work exposes new re
 
 ## Current verification
 
-The initial GitHub Actions workflow configures and builds the Debug and Release presets on both Linux and Windows.
+The M1.1 GitHub Actions workflow configures and builds the Debug and Release presets on Linux and Windows, then runs platform contract tests using SDL's dummy video driver.
 
-- Ubuntu runner: passing
-- Windows runner: passing
+- SDL3: pinned to 3.4.20
 - C++20 compiler capability check: included
+- Window configuration and lifecycle tests: included
+- Quit, window-close and keyboard event translation tests: included
 - CI workflow: [view runs](https://github.com/fried-brain/aether-engine/actions)
 
-These checks validate the current build foundation. They do not yet validate graphics hardware, rendering output, window creation or runtime behaviour.
+CI validates the platform API and a headless window lifecycle. It does not yet validate native display-driver behaviour, GPU surfaces or rendered output.
 
 ## Project principles
 
