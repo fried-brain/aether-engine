@@ -8,8 +8,9 @@ class ILogSink {
 public:
     virtual ~ILogSink() = default;
     // Implementations must not call Logger::log() on the same Logger from write().
-    // A Logger serializes sink writes; sink implementations shared by multiple
-    // Logger instances must provide any additional synchronization they need.
+    // Logger::level() and set_level() are safe from write(): the threshold lock
+    // is released before sink dispatch. A Logger serializes sink writes; sinks
+    // shared by multiple Logger instances must provide any additional synchronization.
     virtual void write(LogLevel level, std::string_view category, std::string_view message) = 0;
 };
 class ConsoleLogSink final : public ILogSink {
