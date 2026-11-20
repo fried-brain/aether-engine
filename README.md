@@ -1,8 +1,12 @@
 <div align="center">
 
-  <img src="assets/brand/aether-emblem.svg" alt="AETHER ENGINE emblem" width="112" />
+  <img src="assets/brand/aether-engine-banner.png" alt="AETHER ENGINE — A modern, open-source game design engine" width="100%" />
 
-  # AETHER ENGINE
+  <br />
+
+  <img src="assets/brand/aether-logo.png" alt="AETHER ENGINE logo" width="180" />
+
+  <h1>AETHER ENGINE</h1>
 
   **Render worlds. Simulate systems. Build what comes next.**
 
@@ -17,33 +21,31 @@
   </p>
 
   <p>
-    <a href="#the-idea">The idea</a> ·
-    <a href="#planned-capabilities">Capabilities</a> ·
+    <a href="#vision">Vision</a> ·
+    <a href="#capabilities">Capabilities</a> ·
     <a href="#architecture">Architecture</a> ·
-    <a href="#get-started">Get started</a> ·
-    <a href="#roadmap">Roadmap</a> ·
+    <a href="#build-from-source">Build</a> ·
+    <a href="#development-status">Development status</a> ·
     <a href="CONTRIBUTING.md">Contributing</a>
   </p>
 
 </div>
 
-<p align="center">
-  <img src="assets/brand/aether-banner.svg" alt="AETHER ENGINE — Render, simulate, create, explore" width="100%" />
-</p>
-
 ---
 
-> **Development status:** AETHER ENGINE is in its early foundation stage. M1.1 introduces the native platform layer. The renderer, editor, physics, world simulation and other systems below describe the project's direction; they are not presented as completed features.
+> **Project status:** AETHER ENGINE is under active early-stage development. The native platform foundation and the first core/runtime logging slice have been merged. The renderer, editor, physics, world simulation and other advanced systems remain planned or under development; they are not represented as completed features.
 
-## The idea
+## Vision
 
-AETHER ENGINE is being built as an independent technology platform for interactive 2D and 3D worlds.
+AETHER ENGINE is an independent technology platform for building interactive 2D and 3D worlds.
 
-The ambition is to bring graphics, physics, procedural environments, animation, audio, AI and scientific simulation together behind a coherent, modular architecture. Each system should have a clear boundary, be replaceable where practical, and earn its place through working code and tests.
+The long-term goal is to bring real-time graphics, physics, procedural environments, animation, audio, AI and scientific simulation together behind a coherent, modular architecture. Systems should have clear boundaries, remain replaceable where practical, and earn their place through working code, tests and documented behaviour.
 
-This is a long-term engineering project. The priority is a dependable foundation—not a long list of features that only exist on paper.
+This is a long-term engineering effort. The priority is a dependable engine foundation—not a feature list that exists only on paper.
 
-## Planned capabilities
+## Capabilities
+
+The following describes the intended direction of the engine. A capability becomes implemented only when its code and acceptance evidence support that claim.
 
 | Domain | Direction |
 |---|---|
@@ -56,11 +58,9 @@ This is a long-term engineering project. The priority is a dependable foundation
 | **Multiplayer** | Server-authoritative networking and synchronized simulation |
 | **Audio** | Spatial audio and extensible sound systems |
 
-Capabilities will move from planned to implemented only when their acceptance criteria and tests support that claim.
-
 ## Architecture
 
-AETHER is a modular native engine. Public engine interfaces are intended to remain independent of third-party implementation details wherever practical.
+AETHER is designed as a modular native engine. Engine-facing interfaces should remain independent of third-party implementation details wherever practical.
 
 | Layer | Responsibility |
 |---|---|
@@ -78,16 +78,16 @@ AETHER is a modular native engine. Public engine interfaces are intended to rema
 | Area | Current direction |
 |---|---|
 | Language | C++20 |
-| Build | CMake 3.25+ |
-| Desktop targets | Windows and Linux |
-| Platform layer | SDL3 3.4.20, behind AETHER-owned interfaces |
+| Build system | CMake 3.25+ |
+| Initial desktop targets | Windows and Linux |
+| Platform layer | SDL3 3.4.20 behind AETHER-owned interfaces |
 | Graphics API | Vulkan — planned, not yet integrated |
 | Editor | Native desktop application — planned |
 | License | Apache License 2.0 |
 
-Third-party dependencies are tracked separately. A library being mentioned as a candidate does not mean it has been integrated. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Third-party dependencies retain their own licenses and notices. A library being listed as a candidate or planned technology does not mean it has been integrated. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-## Get started
+## Build from source
 
 ### Requirements
 
@@ -96,16 +96,16 @@ Third-party dependencies are tracked separately. A library being mentioned as a 
 - Git
 - Internet access for the initial SDL3 source download
 
-### Linux build prerequisites (Ubuntu/Debian)
+### Linux prerequisites (Ubuntu/Debian)
 
-SDL3 is built from source by CMake. On Ubuntu/Debian, install the X11 development packages used by the CI workflow before configuring:
+SDL3 is built from source by CMake. Install the X11 development packages used by the CI workflow before configuring:
 
 ```bash
 sudo apt-get update
 sudo apt-get install --yes libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxinerama-dev libxkbcommon-dev libxtst-dev
 ```
 
-Other Linux distributions need the equivalent development packages for their supported window-system configuration. The headless test driver does not remove SDL's configure-time development-library requirements.
+Other Linux distributions need equivalent development packages for their supported window-system configuration. The headless test driver does not remove SDL's configure-time development-library requirements.
 
 ### Clone
 
@@ -130,41 +130,58 @@ cmake --preset release
 cmake --build --preset release
 ```
 
-### Run platform tests
+### Run tests
 
 ```bash
 ctest --test-dir build/debug -C Debug --output-on-failure
 ```
 
-The current milestone builds the SDL-backed platform library and its contract-test executable. It covers native window lifecycle and selected input/event translation behind AETHER interfaces. It does **not** yet produce a complete runnable game engine, renderer or editor.
+The current foundation builds the SDL-backed platform library and its contract-test executable, alongside the initial core/status/logging library and tests. It does **not** yet produce a complete runnable game engine, renderer or editor.
 
-## Project status
+## Development status
 
-### M1.1 — Native platform foundation
-
-- SDL3 pinned to version 3.4.20
-- AETHER-owned platform, window and input-event interfaces
-- RAII window ownership and platform-state lifetime management
-- Linux and Windows Debug/Release CI builds
-- Headless platform contract tests
-
-**Latest CI:** [Run #25 — successful](https://github.com/fried-brain/aether-engine/actions/runs/44750242516). Both Linux and Windows jobs passed. This verifies the current CI build and test workflow; it does not validate native display drivers, GPU surfaces or rendered output.
-
-M1.1 remains under pull-request review. See [PR #1](https://github.com/fried-brain/aether-engine/pull/1).
-
-## Roadmap
+AETHER ENGINE is developed in reviewable milestones. Merged code is distinguished from work that is still planned.
 
 | Milestone | Scope | Status |
 |---|---|---|
-| **M1.1** | Build and native platform foundation | In review |
-| **M1.2** | Core runtime and logging | Planned |
+| **M1.1** | Build and native platform foundation | <strong>Merged</strong> |
+| **M1.2** | Core status, logging and runtime foundations | <strong>In progress</strong> |
 | **M1.3** | Memory and job infrastructure | Planned |
 | **M1.4** | ECS, scenes and CI expansion | Planned |
 | **M2** | Rendering foundation and graphics resources | Planned |
 | **M3** | Physics and simulation foundations | Planned |
 | **M4** | World systems, asset pipeline and editor foundations | Planned |
 
-A milestone is complete only after its defined acceptance criteria have been verified and accepted.
+### Merged foundation
+
+**M1.1 — Native platform foundation**
+- SDL3 pinned to version 3.4.20
+- AETHER-owned platform, window and input-event interfaces
+- RAII window ownership and platform-state lifetime management
+- Windows and Linux CI builds
+- Headless platform contract tests
+
+**M1.2 — Initial core/runtime slice**
+- Core `Status` and `ErrorCode` foundation
+- Engine-owned logging interface and console sink
+- UTC ISO-8601 millisecond timestamps
+- Log-level filtering and serialized per-logger sink writes
+- Thread dependency propagated through the core target
+- Initial logging and status contract tests
+
+### M1.2 still in progress
+
+The merged logging slice is not the complete M1.2 milestone. Remaining work includes:
+
+- Deterministic module registration and dependency ordering
+- Application lifecycle state machine and rollback
+- Monotonic clock and frame-time contract
+- Typed synchronous event dispatcher
+- Integration tests, failure-path tests and documentation
+
+See the [M1.2 engineering specification](documentation/specifications/M1.2-Core-Runtime-and-Logging-v1.0.md) for the approved behavioural contract.
+
+A milestone is complete only after its acceptance criteria have been implemented, verified and accepted.
 
 ## Engineering principles
 
