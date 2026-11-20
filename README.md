@@ -96,6 +96,17 @@ Third-party dependencies are tracked separately. A library being mentioned as a 
 - Git
 - Internet access for the initial SDL3 source download
 
+### Linux build prerequisites (Ubuntu/Debian)
+
+SDL3 is built from source by CMake. On Ubuntu/Debian, install the X11 development packages used by the CI workflow before configuring:
+
+```bash
+sudo apt-get update
+sudo apt-get install --yes libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxinerama-dev libxkbcommon-dev libxtst-dev
+```
+
+Other Linux distributions need the equivalent development packages for their supported window-system configuration. The headless test driver does not remove SDL's configure-time development-library requirements.
+
 ### Clone
 
 ```bash
