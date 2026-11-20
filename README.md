@@ -154,6 +154,7 @@ AETHER ENGINE is developed in reviewable milestones. Merged code is distinguishe
 <h3><img src="assets/brand/aether-logo.png" alt="" width="22" align="center" /> Merged foundation</h3>
 
 <h3><img src="assets/brand/aether-logo.png" alt="" width="22" align="center" /> M1.1 — Native platform foundation</h3>
+
 - SDL3 pinned to version 3.4.20
 - AETHER-owned platform, window and input-event interfaces
 - RAII window ownership and platform-state lifetime management
@@ -161,6 +162,7 @@ AETHER ENGINE is developed in reviewable milestones. Merged code is distinguishe
 - Headless platform contract tests
 
 <h3><img src="assets/brand/aether-logo.png" alt="" width="22" align="center" /> M1.2 — Initial core/runtime slice</h3>
+
 - Core `Status` and `ErrorCode` foundation
 - Engine-owned logging interface and console sink
 - UTC ISO-8601 millisecond timestamps
