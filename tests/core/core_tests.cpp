@@ -1,6 +1,7 @@
 #include "aether/core/logging.hpp"
 #include "aether/core/status.hpp"
 #include <cstdlib>
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <mutex>
@@ -12,6 +13,16 @@ namespace {
 void expect(bool condition, const char* message) {
     if (!condition) { std::cerr << "FAILED: " << message << '\n'; std::exit(EXIT_FAILURE); }
 }
+class CallbackSink final : public aether::core::ILogSink {
+public:
+    explicit CallbackSink(std::function<void()> callback) : callback_(std::move(callback)) {}
+    void write(aether::core::LogLevel, std::string_view, std::string_view) override {
+        callback_();
+    }
+private:
+    std::function<void()> callback_;
+};
+
 class RecordingSink final : public aether::core::ILogSink {
 public:
     void write(aether::core::LogLevel level, std::string_view category, std::string_view message) override {
@@ -52,6 +63,20 @@ void test_logger_filters_levels_and_preserves_fields() {
     logger.log(LogLevel::Critical, "runtime", "also filtered");
     expect(sink->messages.size() == 1, "Off should filter every message");
 }
+void test_sink_can_update_logger_configuration_during_write() {
+    using namespace aether::core;
+    Logger* logger_ptr = nullptr;
+    auto sink = std::make_shared<CallbackSink>([&] {
+        logger_ptr->set_level(LogLevel::Error);
+    });
+    Logger logger(sink);
+    logger_ptr = &logger;
+
+    logger.log(LogLevel::Warning, "runtime", "change threshold from sink");
+    expect(logger.level() == LogLevel::Error,
+           "sink callback should be able to update configuration without deadlocking");
+}
+
 void test_logger_concurrent_writes_are_complete() {
     using namespace aether::core;
     auto sink = std::make_shared<RecordingSink>();
@@ -73,6 +98,7 @@ int main() {
     test_status_success_and_failure();
     test_logger_rejects_null_sink();
     test_logger_filters_levels_and_preserves_fields();
+    test_sink_can_update_logger_configuration_during_write();
     test_logger_concurrent_writes_are_complete();
     std::cout << "AETHER core contract tests passed.\n";
     return EXIT_SUCCESS;
