@@ -19,7 +19,7 @@ public:
     Platform& operator=(Platform&&) noexcept = default;
     ~Platform() = default;
 
-    [[nodiscard]] bool initialize(std::string* error = nullptr) noexcept;
+    [[nodiscard]] bool initialize(std::string* error = nullptr);
     void shutdown() noexcept;
     [[nodiscard]] bool is_initialized() const noexcept;
 
