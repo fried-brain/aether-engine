@@ -8,10 +8,16 @@
 #include <stdexcept>
 #include <string>
 #include <thread>
+#include <type_traits>
 #include <vector>
 
 namespace {
 using namespace aether::core;
+
+static_assert(!std::is_copy_constructible_v<EventDispatcher>);
+static_assert(!std::is_copy_assignable_v<EventDispatcher>);
+static_assert(std::is_move_constructible_v<EventDispatcher>);
+static_assert(std::is_move_assignable_v<EventDispatcher>);
 
 void expect_runtime(bool condition, const char* message) {
     if (!condition) throw std::runtime_error(message);
