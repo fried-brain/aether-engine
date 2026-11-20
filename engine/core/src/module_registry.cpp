@@ -30,7 +30,7 @@ Status ModuleRegistry::add(std::unique_ptr<IModule> module) {
 
 Status ModuleRegistry::validate() {
     ordered_modules_.clear();
-    std::vector<bool> scheduled(modules_.size(), false);
+    std::vector<unsigned char> scheduled(modules_.size(), 0);
     ordered_modules_.reserve(modules_.size());
 
     for (std::size_t i = 0; i < modules_.size(); ++i) {
@@ -56,12 +56,12 @@ Status ModuleRegistry::validate() {
                 modules_[i]->dependencies().begin(), modules_[i]->dependencies().end(),
                 [this, &scheduled](const ModuleId& dependency) {
                     for (std::size_t j = 0; j < modules_.size(); ++j) {
-                        if (modules_[j]->name() == dependency) return scheduled[j];
+                        if (modules_[j]->name() == dependency) return scheduled[j] != 0;
                     }
                     return false;
                 });
             if (!dependencies_ready) continue;
-            scheduled[i] = true;
+            scheduled[i] = 1;
             ordered_modules_.push_back(modules_[i].get());
             progress = true;
             break;
