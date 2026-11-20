@@ -46,5 +46,8 @@ jobs:
       - name: Build Release
         run: cmake --build --preset release
 
-      - name: Run platform contract tests
+      - name: Run Debug contract tests
         run: ctest --test-dir build/debug -C Debug --output-on-failure
+
+      - name: Run Release contract tests
+        run: ctest --test-dir build/release -C Release --output-on-failure

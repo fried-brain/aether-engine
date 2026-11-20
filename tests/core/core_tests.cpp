@@ -10,6 +10,8 @@
 #include <thread>
 #include <utility>
 #include <vector>
+void run_runtime_tests();
+
 namespace {
 void expect(bool condition, const char* message) {
     if (!condition) { std::cerr << "FAILED: " << message << '\n'; std::exit(EXIT_FAILURE); }
@@ -101,6 +103,7 @@ int main() {
     test_logger_filters_levels_and_preserves_fields();
     test_sink_can_update_logger_configuration_during_write();
     test_logger_concurrent_writes_are_complete();
+    run_runtime_tests();
     std::cout << "AETHER core contract tests passed.\n";
     return EXIT_SUCCESS;
 }
