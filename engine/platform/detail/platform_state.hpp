@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 
 #include <memory>
+#include <utility>
 
 namespace aether::platform::detail {
 
