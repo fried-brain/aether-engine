@@ -23,6 +23,7 @@ A window retains shared ownership of the SDL platform state. Calling `Platform::
 
 - Application quit
 - Window resize
+- Window close request
 - Keyboard press/release (physical USB HID scancode values for the documented key subset)
 - Mouse button press/release
 - Mouse movement
