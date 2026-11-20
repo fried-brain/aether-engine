@@ -1,0 +1,12 @@
+add_library(aether_core STATIC src/status.cpp src/logging.cpp)
+add_library(Aether::Core ALIAS aether_core)
+target_compile_features(aether_core PUBLIC cxx_std_20)
+target_include_directories(aether_core PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/engine>)
+find_package(Threads REQUIRED)
+target_link_libraries(aether_core PUBLIC Threads::Threads)
+
+if(BUILD_TESTING)
+    add_executable(aether_core_tests ${PROJECT_SOURCE_DIR}/tests/core/core_tests.cpp)
+    target_link_libraries(aether_core_tests PRIVATE Aether::Core Threads::Threads)
+    add_test(NAME aether.core.contracts COMMAND aether_core_tests)
+endif()
