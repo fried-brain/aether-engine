@@ -64,14 +64,14 @@ public:
     bool throw_shutdown{false};
 };
 
-std::unique_ptr<TestModule> add_module(ModuleRegistry& registry,
+TestModule* add_module(ModuleRegistry& registry,
     const std::string& name, std::vector<ModuleId> dependencies,
     std::vector<std::string>& events) {
     auto module = std::make_unique<TestModule>(name, std::move(dependencies), events);
     auto* view = module.get();
     const auto result = registry.add(std::move(module));
     expect_runtime(result.ok(), "test module should register");
-    return std::unique_ptr<TestModule>(view);
+    return view;
 }
 
 void test_registry_rejects_duplicate_and_null_modules() {
