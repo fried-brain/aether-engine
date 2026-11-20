@@ -44,6 +44,10 @@ namespace {
             translated.x = static_cast<float>(event.window.data1);
             translated.y = static_cast<float>(event.window.data2);
             break;
+        case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+            translated.type = InputEventType::WindowCloseRequested;
+            translated.window_id = event.window.windowID;
+            break;
         case SDL_EVENT_KEY_DOWN:
             translated.type = InputEventType::KeyPressed;
             translated.window_id = event.key.windowID;
