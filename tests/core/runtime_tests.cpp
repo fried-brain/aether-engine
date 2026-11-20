@@ -185,7 +185,51 @@ void test_update_receives_frame_and_fails_fast_with_reverse_cleanup() {
     expect_runtime(events == expected, "update should fail fast and clean all modules in reverse order");
     expect_runtime(result.message.find("update fault") != std::string::npos,
                    "update failure must remain primary");
+    expect_runtime(failing->received_frame.delta_seconds == frame.delta_seconds &&
+                   failing->received_frame.elapsed_seconds == frame.elapsed_seconds &&
+                   failing->received_frame.frame_index == frame.frame_index,
+                   "module must receive the exact frame context");
     expect_runtime(app.state() == ApplicationState::Failed, "update failure should fail app");
+}
+
+
+void test_update_exception_is_converted_and_rolls_back() {
+    std::vector<std::string> events;
+    ModuleRegistry registry;
+    add_module(registry, "A", {}, events);
+    auto failing = add_module(registry, "B", {}, events);
+    failing->throw_update = true;
+    Logger logger(std::make_shared<RecordingSink>());
+    Application app(logger, std::move(registry));
+    expect_runtime(app.initialize().ok(), "application should initialize");
+    events.clear();
+    const auto result = app.update(FrameContext{});
+    const std::vector<std::string> expected{
+        "update:A", "update:B", "shutdown:B", "shutdown:A"
+    };
+    expect_runtime(result.code == ErrorCode::ModuleUpdateFailed,
+                   "update exception must become ModuleUpdateFailed");
+    expect_runtime(result.message.find("update boom") != std::string::npos,
+                   "update exception detail must be preserved");
+    expect_runtime(events == expected, "update exception must trigger reverse-order rollback");
+}
+
+void test_partial_initialization_cleanup_failure_is_appended() {
+    std::vector<std::string> events;
+    ModuleRegistry registry;
+    auto failing = add_module(registry, "partial", {}, events);
+    failing->initialize_status = Status::failure(ErrorCode::InvalidArgument, "primary init fault");
+    failing->shutdown_status = Status::failure(ErrorCode::InternalError, "partial cleanup fault");
+    Logger logger(std::make_shared<RecordingSink>());
+    Application app(logger, std::move(registry));
+    const auto result = app.initialize();
+    expect_runtime(result.code == ErrorCode::ModuleInitializationFailed,
+                   "initialization failure must remain the primary error category");
+    expect_runtime(result.message.find("primary init fault") != std::string::npos &&
+                   result.message.find("partial cleanup fault") != std::string::npos,
+                   "partial cleanup failure must be appended to the initialization failure");
+    expect_runtime(events == std::vector<std::string>{"init:partial", "shutdown:partial"},
+                   "failing module partial cleanup must run exactly once");
 }
 
 void test_shutdown_attempts_every_module_and_aggregates_failures() {
@@ -299,6 +343,8 @@ void run_runtime_tests() {
     test_initialization_failure_cleans_failing_module_then_prior_modules();
     test_initialization_exception_runs_partial_cleanup();
     test_update_receives_frame_and_fails_fast_with_reverse_cleanup();
+    test_update_exception_is_converted_and_rolls_back();
+    test_partial_initialization_cleanup_failure_is_appended();
     test_shutdown_attempts_every_module_and_aggregates_failures();
     test_application_rejects_illegal_transitions_and_stops_idempotently();
     test_clock_first_tick_reset_and_monotonic_progress();
