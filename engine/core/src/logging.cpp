@@ -54,8 +54,14 @@ LogLevel Logger::level() const noexcept {
     return level_;
 }
 void Logger::log(LogLevel level, std::string_view category, std::string_view message) {
-    const std::lock_guard lock(mutex_);
-    if (level_ == LogLevel::Off || level < level_) return;
+    {
+        const std::lock_guard lock(mutex_);
+        if (level_ == LogLevel::Off || level < level_) return;
+    }
+
+    // Do not hold the configuration mutex while executing user-provided sink code.
+    // The separate mutex preserves per-Logger write ordering and serialization.
+    const std::lock_guard sink_lock(sink_write_mutex_);
     sink_->write(level, category, message);
 }
 } // namespace aether::core
