@@ -27,6 +27,7 @@ private:
     std::vector<IModule*> initialized_modules_;
     ApplicationState state_{ApplicationState::Created};
     Status failure_{Status::success()};
+    bool updating_{false};
 };
 
 } // namespace aether::core
