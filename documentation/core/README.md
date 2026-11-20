@@ -18,6 +18,8 @@ Initialization, update or shutdown failures move the application to `Failed`. Mo
 
 If initialization fails, the failing module receives one best-effort `on_shutdown()` call for partial-resource cleanup, followed by reverse-order cleanup of modules that initialized successfully. An update failure stops further updates and cleans up all initialized modules in reverse order. Shutdown attempts every initialized module even if an earlier cleanup fails; the first failure is retained and later failures are appended to its diagnostic message.
 
+Lifecycle operations cannot be re-entered from module callbacks. In particular, shutdown requested during an update callback returns `InvalidState`; nested updates are also rejected. The caller may request shutdown after the active update returns.
+
 A failed application stores its primary failure. Calling `shutdown()` again after failure returns that stored result without repeating cleanup callbacks. A successfully stopped application treats repeated shutdown as successful and idempotent.
 
 ## Frame time
@@ -28,7 +30,7 @@ A failed application stores its primary failure. Calling `shutdown()` again afte
 
 `EventDispatcher` delivers ordinary C++ event value types synchronously on the calling thread. Handlers run in subscription order.
 
-Dispatch uses a stable subscription snapshot: handlers added during a dispatch do not receive the in-progress event, and handlers unsubscribed before their turn are skipped. If a handler throws, the dispatcher continues with remaining handlers and returns an `InternalError` status containing the number of failed handlers.
+Dispatch uses a stable subscription snapshot: handlers added during a dispatch do not receive the in-progress event, and handlers unsubscribed before their turn are skipped. The dispatcher retains shared ownership of each callable during invocation, so mutable handler state persists across dispatches and self-unsubscription cannot destroy a callable that is currently running. If a handler throws, the dispatcher continues with remaining handlers and returns an `InternalError` status containing the number of failed handlers.
 
 The dispatcher is single-thread confined in M1.2. Concurrent subscription, unsubscription and dispatch are unsupported; callers must provide external confinement.
 
