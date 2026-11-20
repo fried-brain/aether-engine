@@ -12,43 +12,13 @@ namespace {
 
 [[nodiscard]] KeyCode to_key_code(SDL_Scancode scancode) noexcept {
     const auto value = static_cast<std::int32_t>(scancode);
+    if (value >= 4 && value <= 29) {
+        return static_cast<KeyCode>(value);
+    }
+    if (value >= 30 && value <= 39) {
+        return static_cast<KeyCode>(value);
+    }
     switch (value) {
-        case 4: return KeyCode::A;
-        case 5: return KeyCode::B;
-        case 6: return KeyCode::C;
-        case 7: return KeyCode::D;
-        case 8: return KeyCode::E;
-        case 9: return KeyCode::F;
-        case 10: return KeyCode::G;
-        case 11: return KeyCode::H;
-        case 12: return KeyCode::I;
-        case 13: return KeyCode::J;
-        case 14: return KeyCode::K;
-        case 15: return KeyCode::L;
-        case 16: return KeyCode::M;
-        case 17: return KeyCode::N;
-        case 18: return KeyCode::O;
-        case 19: return KeyCode::P;
-        case 20: return KeyCode::Q;
-        case 21: return KeyCode::R;
-        case 22: return KeyCode::S;
-        case 23: return KeyCode::T;
-        case 24: return KeyCode::U;
-        case 25: return KeyCode::V;
-        case 26: return KeyCode::W;
-        case 27: return KeyCode::X;
-        case 28: return KeyCode::Y;
-        case 29: return KeyCode::Z;
-        case 30: return KeyCode::Digit1;
-        case 31: return KeyCode::Digit2;
-        case 32: return KeyCode::Digit3;
-        case 33: return KeyCode::Digit4;
-        case 34: return KeyCode::Digit5;
-        case 35: return KeyCode::Digit6;
-        case 36: return KeyCode::Digit7;
-        case 37: return KeyCode::Digit8;
-        case 38: return KeyCode::Digit9;
-        case 39: return KeyCode::Digit0;
         case 40: return KeyCode::Enter;
         case 41: return KeyCode::Escape;
         case 42: return KeyCode::Backspace;
@@ -121,25 +91,7 @@ namespace {
 
 } // namespace
 
-namespace detail {
-
-PlatformState::~PlatformState() {
-    if (initialized) {
-        SDL_QuitSubSystem(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-        initialized = false;
-    }
-}
-
-WindowImpl::~WindowImpl() {
-    if (window != nullptr) {
-        SDL_DestroyWindow(window);
-        window = nullptr;
-    }
-}
-
-} // namespace detail
-
-bool Platform::initialize(std::string* error) noexcept {
+bool Platform::initialize(std::string* error) {
     if (is_initialized()) {
         return true;
     }
@@ -161,8 +113,8 @@ bool Platform::initialize(std::string* error) noexcept {
 }
 
 void Platform::shutdown() noexcept {
-    // Windows retain the shared platform state, so SDL remains initialized
-    // until the final window has been destroyed.
+    // Existing windows retain the shared state. SDL is shut down only after
+    // the final window has destroyed its native handle.
     state_.reset();
 }
 
@@ -205,9 +157,7 @@ std::unique_ptr<Window> Platform::create_window(
         return nullptr;
     }
 
-    auto impl = std::make_unique<detail::WindowImpl>(native_window, state_.get());
-    // Keep the platform state alive for as long as this window exists.
-    // The shared owner is stored by the public Window in the next implementation step.
+    auto impl = std::make_unique<detail::WindowImpl>(native_window, state_);
     if (error != nullptr) {
         error->clear();
     }
