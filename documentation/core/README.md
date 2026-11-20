@@ -30,7 +30,7 @@ A failed application stores its primary failure. Calling `shutdown()` again afte
 
 `EventDispatcher` delivers ordinary C++ event value types synchronously on the calling thread. Handlers run in subscription order.
 
-Dispatch uses a stable subscription snapshot: handlers added during a dispatch do not receive the in-progress event, and handlers unsubscribed before their turn are skipped. The dispatcher retains shared ownership of each callable during invocation, so mutable handler state persists across dispatches and self-unsubscription cannot destroy a callable that is currently running. If a handler throws, the dispatcher continues with remaining handlers and returns an `InternalError` status containing the number of failed handlers.
+Dispatch uses a stable subscription snapshot: handlers added during a dispatch do not receive the in-progress event, and handlers unsubscribed before their turn are skipped. The dispatcher retains shared ownership of each callable during invocation, so mutable handler state persists across dispatches and self-unsubscription cannot destroy a callable that is currently running. `EventDispatcher` is movable but deliberately non-copyable: subscription ownership belongs to one dispatcher instance. If a handler throws, the dispatcher continues with remaining handlers and returns an `InternalError` status containing the number of failed handlers.
 
 The dispatcher is single-thread confined in M1.2. Concurrent subscription, unsubscription and dispatch are unsupported; callers must provide external confinement.
 
