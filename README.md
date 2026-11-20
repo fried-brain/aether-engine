@@ -1,10 +1,12 @@
 <div align="center">
 
-  <img src="assets/brand/aether-logo.png" alt="AETHER ENGINE emblem" width="132" />
+  <img src="assets/brand/aether-emblem.svg" alt="AETHER ENGINE emblem" width="112" />
 
   # AETHER ENGINE
 
-  **A modern, open-source 3D game engine and world simulation platform.**
+  **Render worlds. Simulate systems. Build what comes next.**
+
+  An independent, open-source 3D game engine and world-simulation platform.
 
   <p>
     <a href="https://github.com/fried-brain/aether-engine/actions"><img src="https://img.shields.io/github/actions/workflow/status/fried-brain/aether-engine/ci.yml?branch=main&style=for-the-badge&label=CI" alt="CI status" /></a>
@@ -15,10 +17,10 @@
   </p>
 
   <p>
-    <a href="#vision">Vision</a> ·
-    <a href="#capabilities">Capabilities</a> ·
+    <a href="#the-idea">The idea</a> ·
+    <a href="#planned-capabilities">Capabilities</a> ·
     <a href="#architecture">Architecture</a> ·
-    <a href="#build">Build</a> ·
+    <a href="#get-started">Get started</a> ·
     <a href="#roadmap">Roadmap</a> ·
     <a href="CONTRIBUTING.md">Contributing</a>
   </p>
@@ -26,105 +28,124 @@
 </div>
 
 <p align="center">
-  <img src="assets/brand/aether-engine-banner.png" alt="AETHER ENGINE — Render, simulate, create, explore" width="100%" />
+  <img src="assets/brand/aether-banner.svg" alt="AETHER ENGINE — Render, simulate, create, explore" width="100%" />
 </p>
 
 ---
 
-> **Project status — early foundation stage.** AETHER ENGINE is under active initial development. The repository currently contains its C++20/CMake foundation and cross-platform CI checks. The renderer, editor, physics integration and other engine systems described below are goals on the roadmap, not finished features.
+> **Development status:** AETHER ENGINE is in its early foundation stage. M1.1 introduces the native platform layer. The renderer, editor, physics, world simulation and other systems below describe the project's direction; they are not presented as completed features.
 
-## The vision
+## The idea
 
-AETHER ENGINE is an independent engine project built around one idea: give creators a modular foundation for building interactive worlds, from compact 2D experiences to ambitious 3D simulations.
+AETHER ENGINE is being built as an independent technology platform for interactive 2D and 3D worlds.
 
-The long-term direction brings real-time rendering, extensible physics, procedural environments, animation, audio, AI and scientific simulation under one coherent engine architecture. The goal is not to imitate another engine, but to develop a distinct, open technology platform with clear interfaces and room to evolve.
+The ambition is to bring graphics, physics, procedural environments, animation, audio, AI and scientific simulation together behind a coherent, modular architecture. Each system should have a clear boundary, be replaceable where practical, and earn its place through working code and tests.
 
-## Capabilities
+This is a long-term engineering project. The priority is a dependable foundation—not a long list of features that only exist on paper.
 
-The following describes the **planned direction** of the engine.
+## Planned capabilities
 
-| Area | Direction |
+| Domain | Direction |
 |---|---|
-| **Rendering** | Vulkan-first rendering architecture, physically based materials, lighting and shadows |
-| **Worlds** | Scene management, terrain, procedural generation, streaming and environmental systems |
-| **Physics** | Rigid-body dynamics, collision and extensible simulation interfaces |
-| **Scientific simulation** | Material properties, thermal behaviour, fluids and other domain-specific solvers |
-| **Creation tools** | Native desktop editor, asset workflows and reusable project templates |
+| **Real-time graphics** | Vulkan-first rendering, physically based materials, lighting and shadows |
+| **World creation** | Scene management, terrain, procedural generation, streaming and weather |
+| **Physics & simulation** | Rigid-body dynamics, collision, fluids, thermal behaviour and extensible solvers |
+| **Creation tools** | Native desktop editor, asset pipeline and reusable project templates |
 | **Gameplay** | Entity-component architecture, animation and Lua scripting |
-| **AI** | NPC behaviour systems and optional integrations with language models |
-| **Networking** | Multiplayer architecture with server-authoritative simulation |
+| **AI** | NPC behaviour and optional language-model integrations |
+| **Multiplayer** | Server-authoritative networking and synchronized simulation |
 | **Audio** | Spatial audio and extensible sound systems |
 
-These systems will be introduced incrementally and marked as implemented only after their tests and acceptance criteria pass.
+Capabilities will move from planned to implemented only when their acceptance criteria and tests support that claim.
 
 ## Architecture
 
-AETHER is designed as a modular native engine. Engine-facing interfaces should remain independent of third-party implementation details wherever practical.
+AETHER is a modular native engine. Public engine interfaces are intended to remain independent of third-party implementation details wherever practical.
 
 | Layer | Responsibility |
 |---|---|
-| Core | Application lifecycle, modules, events, time and diagnostics |
-| Platform | Windows, Linux, windowing, input and system capabilities |
-| Runtime | Memory, jobs, entities, components and scenes |
-| Graphics | Rendering abstraction, Vulkan backend, resources and materials |
-| Simulation | Physics, material models and extensible scientific solvers |
-| World | Terrain, procedural content, streaming and environment |
-| Tools | Native editor, asset pipeline and developer utilities |
-| Services | Optional scripting, AI and networking integrations |
+| **Core** | Application lifecycle, modules, events, time and diagnostics |
+| **Platform** | Native windows, input and operating-system integration |
+| **Runtime** | Memory, jobs, entities, components and scenes |
+| **Graphics** | Rendering abstraction, Vulkan backend, resources and materials |
+| **Simulation** | Physics, material models and scientific solvers |
+| **World** | Terrain, procedural content, streaming and environment |
+| **Tools** | Native editor, asset pipeline and developer utilities |
+| **Services** | Optional scripting, AI and networking integrations |
 
-### Initial technology baseline
+### Technology baseline
 
-| Component | Initial direction |
+| Area | Current direction |
 |---|---|
 | Language | C++20 |
-| Build system | CMake 3.25+ |
-| Graphics API | Vulkan (planned; not integrated yet) |
+| Build | CMake 3.25+ |
 | Desktop targets | Windows and Linux |
-| Editor | Native desktop application |
+| Platform layer | SDL3 3.4.20, behind AETHER-owned interfaces |
+| Graphics API | Vulkan — planned, not yet integrated |
+| Editor | Native desktop application — planned |
 | License | Apache License 2.0 |
 
-Third-party libraries are evaluated separately. A candidate dependency is not considered integrated or approved merely because it appears in the architecture plan. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Third-party dependencies are tracked separately. A library being mentioned as a candidate does not mean it has been integrated. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-## Build
+## Get started
 
 ### Requirements
 
 - CMake 3.25 or newer
-- A C++ compiler with the required C++20 language and standard-library support
+- A C++ compiler with C++20 support
 - Git
+- Internet access for the initial SDL3 source download
 
-### Configure and build
-
-Clone the repository:
+### Clone
 
 ```bash
 git clone https://github.com/fried-brain/aether-engine.git
 cd aether-engine
 ```
 
-Configure and build the Debug preset:
+### Configure and build
+
+Debug:
 
 ```bash
 cmake --preset debug
 cmake --build --preset debug
 ```
 
-Configure and build the Release preset:
+Release:
 
 ```bash
 cmake --preset release
 cmake --build --preset release
 ```
 
-The current build produces the SDL-backed AETHER platform library and its contract-test executable. It provides native window lifecycle and input/event translation behind AETHER-owned interfaces. It does not yet produce a runnable game engine, renderer or editor. The first configure fetches the pinned SDL3 source release, so an internet connection is required for that initial dependency download.
+### Run platform tests
+
+```bash
+ctest --test-dir build/debug -C Debug --output-on-failure
+```
+
+The current milestone builds the SDL-backed platform library and its contract-test executable. It covers native window lifecycle and selected input/event translation behind AETHER interfaces. It does **not** yet produce a complete runnable game engine, renderer or editor.
+
+## Project status
+
+### M1.1 — Native platform foundation
+
+- SDL3 pinned to version 3.4.20
+- AETHER-owned platform, window and input-event interfaces
+- RAII window ownership and platform-state lifetime management
+- Linux and Windows Debug/Release CI builds
+- Headless platform contract tests
+
+**Latest CI:** [Run #25 — successful](https://github.com/fried-brain/aether-engine/actions/runs/44750242516). Both Linux and Windows jobs passed. This verifies the current CI build and test workflow; it does not validate native display drivers, GPU surfaces or rendered output.
+
+M1.1 remains under pull-request review. See [PR #1](https://github.com/fried-brain/aether-engine/pull/1).
 
 ## Roadmap
 
-Development is milestone-driven. Each milestone has its own engineering specification, implementation tasks and acceptance evidence.
-
 | Milestone | Scope | Status |
 |---|---|---|
-| **M1.1** | Build and native platform foundation | In progress |
+| **M1.1** | Build and native platform foundation | In review |
 | **M1.2** | Core runtime and logging | Planned |
 | **M1.3** | Memory and job infrastructure | Planned |
 | **M1.4** | ECS, scenes and CI expansion | Planned |
@@ -132,48 +153,36 @@ Development is milestone-driven. Each milestone has its own engineering specific
 | **M3** | Physics and simulation foundations | Planned |
 | **M4** | World systems, asset pipeline and editor foundations | Planned |
 
-The roadmap is directional and may be refined as engineering work exposes new requirements. A milestone is not complete until its defined acceptance criteria have been verified.
+A milestone is complete only after its defined acceptance criteria have been verified and accepted.
 
-## Current verification
+## Engineering principles
 
-The M1.1 GitHub Actions workflow configures and builds the Debug and Release presets on Linux and Windows, then runs platform contract tests using SDL's dummy video driver.
-
-- SDL3: pinned to 3.4.20
-- C++20 compiler capability check: included
-- Window configuration and lifecycle tests: included
-- Quit, window-close and keyboard event translation tests: included
-- CI workflow: [view runs](https://github.com/fried-brain/aether-engine/actions)
-
-CI validates the platform API and a headless window lifecycle. It does not yet validate native display-driver behaviour, GPU surfaces or rendered output.
-
-## Project principles
-
-1. **Independent engineering.** Build original systems and interfaces; do not copy proprietary engine code or protected assets.
-2. **Modularity.** Keep subsystems replaceable and their boundaries explicit.
-3. **Correctness before complexity.** Prefer testable foundations over premature optimization.
-4. **Evidence over claims.** Document what works, what is experimental and what remains planned.
-5. **Responsible dependencies.** Review versions, licenses, security and maintenance before integration.
-6. **Offline-capable core.** Cloud services and external AI providers must remain optional to the native runtime.
+1. **Build independently.** Create original systems and interfaces; do not copy proprietary engine code or protected assets.
+2. **Keep boundaries clear.** Subsystems should be modular and replaceable where practical.
+3. **Correctness before complexity.** Prefer understandable, testable foundations over premature optimization.
+4. **Show the evidence.** Distinguish implemented, experimental and planned work.
+5. **Treat dependencies responsibly.** Review versions, licenses, attribution, security and maintenance.
+6. **Keep the core offline-capable.** Cloud services and external AI providers remain optional to the native runtime.
 
 ## Contributing
 
-AETHER ENGINE is open source, and thoughtful contributions are welcome as the project matures.
+Thoughtful contributions are welcome as the project matures.
 
-Before proposing a substantial change, read [CONTRIBUTING.md](CONTRIBUTING.md), check the current roadmap and open an issue or discussion to align on the design. Include tests and documentation for behavioural changes.
+Before proposing a substantial change, read [CONTRIBUTING.md](CONTRIBUTING.md), review the roadmap and open an issue or discussion so the design can be aligned first. Behavioural changes should include tests and documentation.
 
-Please do not submit proprietary code, unlicensed assets, credentials or confidential material.
+Do not submit proprietary code, unlicensed assets, credentials or confidential material.
 
 ## License
 
-AETHER ENGINE is licensed under the **Apache License 2.0**. You may use, modify and distribute the project under the terms of that license. See [LICENSE](LICENSE).
+AETHER ENGINE is licensed under the **Apache License 2.0**. See [LICENSE](LICENSE) for the full terms.
 
-Third-party components retain their own licenses and notices; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Third-party components retain their own licenses and notices. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ---
 
 <div align="center">
 
-  <img src="assets/brand/aether-emblem.svg" alt="" width="54" />
+  <img src="assets/brand/aether-emblem.svg" alt="" width="48" />
 
   **AETHER ENGINE**
 
