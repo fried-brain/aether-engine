@@ -2,6 +2,8 @@
 
 #include <SDL3/SDL.h>
 
+#include <memory>
+
 namespace aether::platform::detail {
 
 struct PlatformState final {
@@ -14,15 +16,15 @@ struct PlatformState final {
 };
 
 struct WindowImpl final {
-    WindowImpl(SDL_Window* native_window, PlatformState* owner) noexcept
-        : window(native_window), platform(owner) {}
+    WindowImpl(SDL_Window* native_window, std::shared_ptr<PlatformState> owner) noexcept
+        : window(native_window), platform(std::move(owner)) {}
 
     WindowImpl(const WindowImpl&) = delete;
     WindowImpl& operator=(const WindowImpl&) = delete;
     ~WindowImpl();
 
     SDL_Window* window{nullptr};
-    PlatformState* platform{nullptr};
+    std::shared_ptr<PlatformState> platform;
 };
 
 } // namespace aether::platform::detail
