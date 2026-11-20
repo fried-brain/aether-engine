@@ -40,7 +40,7 @@ void ConsoleLogSink::write(LogLevel level, std::string_view category, std::strin
            << std::setfill('0') << milliseconds.count() << "Z [" << level_name(level)
            << "] [" << category << "] " << message;
     const std::lock_guard lock(mutex_);
-    std::cerr << record.str() << '\\n';
+    std::cerr << record.str() << '\n';
 }
 Logger::Logger(std::shared_ptr<ILogSink> sink) : sink_(std::move(sink)) {
     if (!sink_) throw std::invalid_argument("Logger requires a non-null log sink.");
