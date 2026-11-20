@@ -1,0 +1,41 @@
+name: AETHER ENGINE CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cmake-foundation:
+    name: CMake foundation / ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Show toolchain versions
+        run: |
+          cmake --version
+          cmake --list-presets
+
+      - name: Configure Debug
+        run: cmake --preset debug
+
+      - name: Build Debug
+        run: cmake --build --preset debug
+
+      - name: Configure Release
+        run: cmake --preset release
+
+      - name: Build Release
+        run: cmake --build --preset release
