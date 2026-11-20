@@ -2,15 +2,18 @@
 
 AETHER ENGINE tracks third-party software separately from its own Apache-2.0-licensed source.
 
-## Current status
+## Integrated dependencies
 
-No third-party software dependency has been integrated into the repository baseline.
+| Component | Version | Intended use | License | Source |
+|---|---:|---|---|---|
+| SDL3 | 3.4.20 | Native windowing and input/event platform layer | zlib | https://github.com/libsdl-org/SDL/tree/release-3.4.20 |
 
-The following are candidates from the approved architecture work and must be version- and license-reviewed before integration:
+SDL3 is fetched by CMake at the pinned `release-3.4.20` tag and built as a static dependency for the initial desktop platform target. SDL3's own license and notices remain applicable.
+
+## Evaluated candidates — not integrated
 
 | Candidate | Intended use | Integration status |
 |---|---|---|
-| SDL3 | Platform, window and input abstraction | Not integrated |
 | EnTT | ECS implementation behind AETHER interfaces | Not integrated |
 | Jolt Physics | Rigid-body physics foundation | Not integrated |
 | Lua | Gameplay scripting | Not integrated |
@@ -19,6 +22,6 @@ The following are candidates from the approved architecture work and must be ver
 | GLM | Mathematics | Not integrated |
 | fmt | Formatting, if required | Not integrated |
 
-This register is not an approval to integrate these dependencies. Each selected version must be recorded with its source, license, attribution requirements, maintenance status and security review before use.
+Each additional dependency must have its exact version, source, license, attribution requirements, maintenance status and security review recorded before integration.
 
 The AETHER ENGINE Apache-2.0 license does not replace or modify the license of any third-party component.

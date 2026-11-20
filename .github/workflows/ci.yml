@@ -23,6 +23,12 @@ jobs:
       - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      - name: Install Linux SDL build prerequisites
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxinerama-dev libxkbcommon-dev libxtst-dev
+
       - name: Show toolchain versions
         run: |
           cmake --version
@@ -39,3 +45,6 @@ jobs:
 
       - name: Build Release
         run: cmake --build --preset release
+
+      - name: Run platform contract tests
+        run: ctest --test-dir build/debug -C Debug --output-on-failure
