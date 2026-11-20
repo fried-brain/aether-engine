@@ -21,6 +21,9 @@ if(BUILD_TESTING)
     add_executable(aether_platform_tests
         ${PROJECT_SOURCE_DIR}/tests/platform/platform_tests.cpp
     )
-    target_link_libraries(aether_platform_tests PRIVATE Aether::Platform)
+    target_link_libraries(aether_platform_tests PRIVATE Aether::Platform SDL3::SDL3)
     add_test(NAME aether.platform.contracts COMMAND aether_platform_tests)
+    set_tests_properties(aether.platform.contracts PROPERTIES
+        ENVIRONMENT "SDL_VIDEODRIVER=dummy"
+    )
 endif()
