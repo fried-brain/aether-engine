@@ -8,6 +8,7 @@ enum class InputEventType : std::uint8_t {
     Unknown,
     QuitRequested,
     WindowResized,
+    WindowCloseRequested,
     KeyPressed,
     KeyReleased,
     MouseButtonPressed,
