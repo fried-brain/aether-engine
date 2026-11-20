@@ -98,6 +98,11 @@ void test_quit_and_keyboard_events_are_translated() {
     quit.type = SDL_EVENT_QUIT;
     expect(SDL_PushEvent(&quit), "quit event should enter SDL event queue");
 
+    SDL_Event close{};
+    close.type = SDL_EVENT_WINDOW_CLOSE_REQUESTED;
+    close.window.windowID = 77;
+    expect(SDL_PushEvent(&close), "window close event should enter SDL event queue");
+
     SDL_Event key{};
     key.type = SDL_EVENT_KEY_DOWN;
     key.key.scancode = SDL_SCANCODE_A;
@@ -106,10 +111,14 @@ void test_quit_and_keyboard_events_are_translated() {
 
     const auto events = platform.poll_events();
     bool saw_quit = false;
+    bool saw_close = false;
     bool saw_key = false;
     for (const auto& event : events) {
         if (event.type == aether::platform::InputEventType::QuitRequested) {
             saw_quit = true;
+        }
+        if (event.type == aether::platform::InputEventType::WindowCloseRequested) {
+            saw_close = event.window_id == 77;
         }
         if (event.type == aether::platform::InputEventType::KeyPressed) {
             saw_key = event.key == aether::platform::KeyCode::A && event.repeat;
@@ -117,6 +126,7 @@ void test_quit_and_keyboard_events_are_translated() {
     }
 
     expect(saw_quit, "SDL quit event should translate to AETHER quit event");
+    expect(saw_close, "SDL window close request should retain its window ID");
     expect(saw_key, "SDL keyboard event should translate to AETHER key event");
     platform.shutdown();
 }
