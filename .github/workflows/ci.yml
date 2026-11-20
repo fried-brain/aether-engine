@@ -27,10 +27,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install --yes \\
-            libx11-dev libxext-dev libxrandr-dev libxcursor-dev \\
-            libxfixes-dev libxi-dev libxss-dev libxinerama-dev \\
-            libxkbcommon-dev
+          sudo apt-get install --yes libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxinerama-dev libxkbcommon-dev
 
       - name: Show toolchain versions
         run: |
