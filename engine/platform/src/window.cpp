@@ -14,9 +14,12 @@ Window& Window::operator=(Window&&) noexcept = default;
 Window::~Window() = default;
 
 void Window::close() noexcept {
-    if (impl_ && impl_->window != nullptr) {
-        SDL_DestroyWindow(impl_->window);
-        impl_->window = nullptr;
+    if (impl_) {
+        if (impl_->window != nullptr) {
+            SDL_DestroyWindow(impl_->window);
+            impl_->window = nullptr;
+        }
+        impl_->platform.reset();
     }
 }
 
