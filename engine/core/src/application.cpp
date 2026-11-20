@@ -99,11 +99,12 @@ Status Application::initialize() {
 }
 
 Status Application::update(const FrameContext& frame) {
-    if (state_ != ApplicationState::Running) {
+    if (state_ != ApplicationState::Running || updating_) {
         return Status::failure(ErrorCode::InvalidState,
-            "Application update requires Running state.");
+            "Application update requires Running state and no active update.");
     }
 
+    updating_ = true;
     for (auto* module : initialized_modules_) {
         Status result;
         try {
@@ -120,6 +121,8 @@ Status Application::update(const FrameContext& frame) {
                 result.message = "Module '" + std::string(module->name()) +
                     " on_update failed: " + result.message;
             }
+            updating_ = false;
+            state_ = ApplicationState::Stopping;
             const auto cleanup = shutdown_initialized_modules();
             append_failure(result, cleanup);
             failure_ = result;
@@ -127,6 +130,7 @@ Status Application::update(const FrameContext& frame) {
             return failure_;
         }
     }
+    updating_ = false;
     return Status::success();
 }
 
@@ -155,6 +159,10 @@ Status Application::shutdown_initialized_modules() {
 }
 
 Status Application::shutdown() {
+    if (updating_) {
+        return Status::failure(ErrorCode::InvalidState,
+            "Application shutdown cannot run from inside an update callback.");
+    }
     if (state_ == ApplicationState::Stopped) return Status::success();
     if (state_ == ApplicationState::Failed) return failure_;
     if (state_ == ApplicationState::Created) {
