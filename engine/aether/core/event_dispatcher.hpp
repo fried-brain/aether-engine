@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <string>
 #include <typeindex>
 #include <unordered_map>
@@ -30,8 +31,9 @@ public:
         auto erased = [callback = std::move(handler)](const void* event) {
             callback(*static_cast<const Event*>(event));
         };
+        auto callback = std::make_shared<std::function<void(const void*)>>(std::move(erased));
         handlers_[std::type_index(typeid(Event))].push_back(
-            Entry{subscription, std::move(erased)});
+            Entry{subscription, std::move(callback)});
         return subscription;
     }
 
@@ -55,9 +57,11 @@ public:
                 });
             if (entry == current->second.end()) continue;
 
-            auto callback = entry->callback;
+            // Retain the subscribed callable while invoking it. This preserves mutable
+            // handler state and keeps self-unsubscription safe.
+            const auto callback = entry->callback;
             try {
-                callback(&event);
+                (*callback)(&event);
             } catch (...) {
                 ++failures;
             }
@@ -83,7 +87,7 @@ public:
 private:
     struct Entry final {
         Subscription subscription;
-        std::function<void(const void*)> callback;
+        std::shared_ptr<std::function<void(const void*)>> callback;
     };
 
     std::unordered_map<std::type_index, std::vector<Entry>> handlers_;
