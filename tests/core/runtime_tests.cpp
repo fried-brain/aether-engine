@@ -3,6 +3,7 @@
 #include "aether/core/event_dispatcher.hpp"
 
 #include <chrono>
+#include <functional>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -41,6 +42,7 @@ public:
     Status on_update(const FrameContext& frame) override {
         events_.push_back("update:" + name_);
         received_frame = frame;
+        if (update_action) nested_action_status = update_action();
         if (throw_update) throw std::runtime_error("update boom");
         return update_status;
     }
@@ -58,6 +60,8 @@ public:
     Status update_status{Status::success()};
     Status shutdown_status{Status::success()};
     FrameContext received_frame{};
+    std::function<Status()> update_action;
+    Status nested_action_status{Status::success()};
     bool throw_initialize{false};
     bool throw_nonstandard_initialize{false};
     bool throw_update{false};
@@ -232,6 +236,50 @@ void test_partial_initialization_cleanup_failure_is_appended() {
                    "failing module partial cleanup must run exactly once");
 }
 
+
+void test_shutdown_requested_from_update_callback_is_rejected_without_mutation() {
+    std::vector<std::string> events;
+    ModuleRegistry registry;
+    auto requester = add_module(registry, "requester", {}, events);
+    add_module(registry, "follower", {}, events);
+    Logger logger(std::make_shared<RecordingSink>());
+    Application app(logger, std::move(registry));
+    requester->update_action = [&app] { return app.shutdown(); };
+
+    expect_runtime(app.initialize().ok(), "application should initialize");
+    events.clear();
+    const auto update_result = app.update(FrameContext{});
+    expect_runtime(update_result.ok(), "update should continue after rejected reentrant shutdown");
+    expect_runtime(requester->nested_action_status.code == ErrorCode::InvalidState,
+                   "shutdown from inside update callback must be rejected");
+    expect_runtime(app.state() == ApplicationState::Running,
+                   "rejected shutdown must leave application running");
+    expect_runtime(events == std::vector<std::string>{"update:requester", "update:follower"},
+                   "no module may be shut down or skipped during the active update");
+
+    events.clear();
+    expect_runtime(app.shutdown().ok(), "owner should be able to shut down after update completes");
+    expect_runtime(events == std::vector<std::string>{"shutdown:follower", "shutdown:requester"},
+                   "explicit shutdown after update must clean up exactly once in reverse order");
+}
+
+void test_recursive_update_from_module_callback_is_rejected() {
+    std::vector<std::string> events;
+    ModuleRegistry registry;
+    auto requester = add_module(registry, "requester", {}, events);
+    Logger logger(std::make_shared<RecordingSink>());
+    Application app(logger, std::move(registry));
+    requester->update_action = [&app] { return app.update(FrameContext{}); };
+    expect_runtime(app.initialize().ok(), "application should initialize");
+    events.clear();
+    expect_runtime(app.update(FrameContext{}).ok(), "outer update should complete");
+    expect_runtime(requester->nested_action_status.code == ErrorCode::InvalidState,
+                   "nested update must be rejected");
+    expect_runtime(events == std::vector<std::string>{"update:requester"},
+                   "nested update must not invoke module callbacks");
+    expect_runtime(app.shutdown().ok(), "application should shut down");
+}
+
 void test_shutdown_attempts_every_module_and_aggregates_failures() {
     std::vector<std::string> events;
     ModuleRegistry registry;
@@ -317,6 +365,32 @@ void test_event_dispatch_order_unsubscribe_and_stable_snapshot() {
                    "remaining handlers should run in subscription order");
 }
 
+
+void test_event_handler_mutable_state_persists_between_dispatches() {
+    EventDispatcher dispatcher;
+    int observed = 0;
+    dispatcher.subscribe<NumberEvent>([count = 0, &observed](const NumberEvent&) mutable {
+        observed = ++count;
+    });
+    expect_runtime(dispatcher.dispatch(NumberEvent{1}).ok(), "first dispatch should succeed");
+    expect_runtime(observed == 1, "first dispatch should increment persistent handler state");
+    expect_runtime(dispatcher.dispatch(NumberEvent{2}).ok(), "second dispatch should succeed");
+    expect_runtime(observed == 2, "second dispatch must continue the same handler state");
+}
+
+void test_event_handler_can_unsubscribe_itself_safely() {
+    EventDispatcher dispatcher;
+    int calls = 0;
+    Subscription self;
+    self = dispatcher.subscribe<NumberEvent>([&](const NumberEvent&) {
+        ++calls;
+        dispatcher.unsubscribe(self);
+    });
+    expect_runtime(dispatcher.dispatch(NumberEvent{1}).ok(), "self-unsubscribe dispatch should succeed");
+    expect_runtime(dispatcher.dispatch(NumberEvent{2}).ok(), "dispatch after self-unsubscribe should succeed");
+    expect_runtime(calls == 1, "self-unsubscribed handler must run only once");
+}
+
 void test_event_handler_exception_does_not_stop_later_handlers() {
     EventDispatcher dispatcher;
     int later_handler_calls = 0;
@@ -344,10 +418,14 @@ void run_runtime_tests() {
     test_initialization_exception_runs_partial_cleanup();
     test_update_receives_frame_and_fails_fast_with_reverse_cleanup();
     test_update_exception_is_converted_and_rolls_back();
+    test_shutdown_requested_from_update_callback_is_rejected_without_mutation();
+    test_recursive_update_from_module_callback_is_rejected();
     test_partial_initialization_cleanup_failure_is_appended();
     test_shutdown_attempts_every_module_and_aggregates_failures();
     test_application_rejects_illegal_transitions_and_stops_idempotently();
     test_clock_first_tick_reset_and_monotonic_progress();
     test_event_dispatch_order_unsubscribe_and_stable_snapshot();
+    test_event_handler_mutable_state_persists_between_dispatches();
+    test_event_handler_can_unsubscribe_itself_safely();
     test_event_handler_exception_does_not_stop_later_handlers();
 }
