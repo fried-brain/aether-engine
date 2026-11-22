@@ -1,5 +1,6 @@
 #include "aether/memory/memory_resource.hpp"
 
+#include <new>
 #include <utility>
 
 namespace aether::memory {

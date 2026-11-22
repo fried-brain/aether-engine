@@ -16,6 +16,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(CheckCXXSourceCompiles)
 include(CTest)
 include(FetchContent)
+find_package(Threads REQUIRED)
 
 check_cxx_source_compiles([=[
     #include <concepts>
