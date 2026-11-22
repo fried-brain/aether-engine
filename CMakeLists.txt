@@ -16,6 +16,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(CheckCXXSourceCompiles)
 include(CTest)
 include(FetchContent)
+find_package(Threads REQUIRED)
 
 check_cxx_source_compiles([=[
     #include <concepts>
@@ -78,6 +79,8 @@ target_include_directories(aether_engine
 
 add_subdirectory(engine/platform)
 add_subdirectory(engine/core)
+add_subdirectory(engine/memory)
+add_subdirectory(engine/jobs)
 
 message(STATUS "AETHER ENGINE ${PROJECT_VERSION}")
 message(STATUS "C++ standard requirement: C++20")
