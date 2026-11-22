@@ -78,6 +78,8 @@ target_include_directories(aether_engine
 
 add_subdirectory(engine/platform)
 add_subdirectory(engine/core)
+add_subdirectory(engine/memory)
+add_subdirectory(engine/jobs)
 
 message(STATUS "AETHER ENGINE ${PROJECT_VERSION}")
 message(STATUS "C++ standard requirement: C++20")
