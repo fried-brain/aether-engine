@@ -43,6 +43,7 @@ void* TrackingMemoryResource::allocate(std::size_t size, std::size_t alignment) 
             const auto found = allocations_.find(pointer);
             if (found == allocations_.end()) {
                 // Metadata insertion failed; the upstream allocation is still ours.
+                ++stats_.failed_allocations;
                 upstream_.deallocate(pointer, size, alignment);
             }
         }

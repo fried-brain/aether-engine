@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <new>
 #include <thread>
 #include <vector>
 
@@ -48,6 +49,21 @@ void test_tracking_resource_statistics_and_mismatch_recovery() {
            "all live allocation statistics must return to zero");
 }
 
+void test_tracking_resource_counts_failed_upstream_allocations() {
+    class FailingResource final : public aether::memory::IMemoryResource {
+    public:
+        void* allocate(std::size_t, std::size_t) override { throw std::bad_alloc(); }
+        void deallocate(void*, std::size_t, std::size_t) noexcept override {}
+    } upstream;
+    aether::memory::TrackingMemoryResource resource(upstream);
+    bool threw = false;
+    try { (void)resource.allocate(32, 16); }
+    catch (const std::bad_alloc&) { threw = true; }
+    expect(threw, "upstream allocation failure must propagate");
+    expect(resource.stats().failed_allocations == 1,
+           "upstream allocation failure must be counted");
+}
+
 void test_tracking_resource_rejects_invalid_pointer_without_forwarding() {
     aether::memory::SystemMemoryResource upstream;
     aether::memory::TrackingMemoryResource resource(upstream);
@@ -85,6 +101,7 @@ void test_tracking_resource_concurrent_accounting() {
 int main() {
     test_system_resource_alignment_and_zero_size();
     test_tracking_resource_statistics_and_mismatch_recovery();
+    test_tracking_resource_counts_failed_upstream_allocations();
     test_tracking_resource_rejects_invalid_pointer_without_forwarding();
     test_tracking_resource_concurrent_accounting();
     std::cout << "AETHER memory contract tests passed.\n";

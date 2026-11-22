@@ -5,6 +5,11 @@
 #include <cstddef>
 #include <functional>
 #include <memory>
+#include <condition_variable>
+#include <mutex>
+#include <queue>
+#include <thread>
+#include <vector>
 
 namespace aether::jobs {
 
@@ -55,7 +60,6 @@ public:
     [[nodiscard]] JobSubmission submit(std::function<void()> function);
     [[nodiscard]] aether::core::Status shutdown();
     [[nodiscard]] JobSystemState state() const noexcept;
-    [[nodiscard]] std::size_t worker_count() const noexcept;
 
 private:
     void worker_loop() noexcept;

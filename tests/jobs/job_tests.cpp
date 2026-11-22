@@ -63,6 +63,27 @@ void test_shutdown_drains_accepted_jobs_and_rejects_new_work() {
     expect(system.shutdown().ok(), "repeated shutdown should be idempotent");
 }
 
+void test_handles_support_multiple_waiters_and_empty_submission_is_rejected() {
+    aether::jobs::JobSystem system({2});
+    expect(system.start().ok(), "job system should start");
+    std::atomic<bool> release{false};
+    auto submitted = system.submit([&] {
+        while (!release.load()) std::this_thread::yield();
+    });
+    expect(submitted.status.ok(), "job should be accepted");
+    std::atomic<int> successful_waiters{0};
+    std::thread first([&] { if (submitted.handle.wait().ok()) ++successful_waiters; });
+    std::thread second([&] { if (submitted.handle.wait().ok()) ++successful_waiters; });
+    release.store(true);
+    first.join();
+    second.join();
+    expect(successful_waiters.load() == 2, "multiple waiters must observe the same completion");
+    auto empty = system.submit({});
+    expect(empty.status.code == aether::core::ErrorCode::InvalidArgument &&
+           !empty.handle.valid(), "empty callable must be rejected");
+    expect(system.shutdown().ok(), "system should shut down");
+}
+
 void test_worker_cannot_deadlock_waiting_on_its_own_system() {
     aether::jobs::JobSystem system({1});
     expect(system.start().ok(), "job system should start");
@@ -83,6 +104,7 @@ int main() {
     test_jobs_execute_and_handles_complete();
     test_job_exception_is_reported_and_worker_survives();
     test_shutdown_drains_accepted_jobs_and_rejects_new_work();
+    test_handles_support_multiple_waiters_and_empty_submission_is_rejected();
     test_worker_cannot_deadlock_waiting_on_its_own_system();
     std::cout << "AETHER job contract tests passed.\n";
     return EXIT_SUCCESS;

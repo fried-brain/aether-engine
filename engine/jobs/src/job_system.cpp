@@ -201,9 +201,6 @@ JobSystemState JobSystem::state() const noexcept {
     return state_;
 }
 
-std::size_t JobSystem::worker_count() const noexcept {
-    return workers_.size();
-}
 
 void JobSystem::worker_loop() noexcept {
     const auto* previous_system = current_worker_system;
